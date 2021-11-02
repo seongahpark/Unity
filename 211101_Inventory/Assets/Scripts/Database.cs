@@ -19,8 +19,8 @@ public class Database : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(AddUserInfoCoroutine("kch1234", "1234", 28, "호야"));
-        StartCoroutine(GetUserInfoCoroutine());
+        //StartCoroutine(AddUserInfoCoroutine("kch1234", "1234", 28, "호야"));
+        //StartCoroutine(GetUserInfoCoroutine());
     }
 
     private IEnumerator AddUserInfoCoroutine(
