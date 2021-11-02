@@ -22,8 +22,7 @@ $sql = "SELECT * FROM login WHERE id = '" . $id . "'";
 $result = $conn->query($sql);
 
 if($result->num_rows > 0) {
-	//$update_sql = "UPDATE login SET score = '" . $score . "' WHERE id = '" . $id . "'";
-	//$conn->query($update_sql);
+	echo "ID is already in use";
 }
 else {
 // insert into login (id, pw, age, name) values ('id', 'pw', 'age', 'name');
@@ -31,6 +30,7 @@ else {
 				   VALUES ('" . $id . "', '" . $pw . "', '"
 				   . $age . "', '" . $name . "')";
 	$conn->query($insert_sql);
+	echo "Register Success";
 }
 
 $conn->close();
