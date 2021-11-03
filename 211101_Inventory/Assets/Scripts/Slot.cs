@@ -7,17 +7,16 @@ using Newtonsoft.Json;
 
 public class Slot : MonoBehaviour
 {
-    [SerializeField] private Item item;
+    public Item item;
     public int itemCount;
-    [SerializeField] private Text t_count;
+    public Text t_count;
+    public Image itemImage;
 
     public class DataItem
     {
-        public string type { get; set; }
         public string name { get; set; }
         public int context { get; set; }
     }
-
     // Start is called before the first frame update
     void Start()
     {
@@ -30,17 +29,23 @@ public class Slot : MonoBehaviour
         
     }
 
-    public void AddItem(Item _item, int _cnt = 1)
+    public void AddItem(string name, int _cnt = 1)
     {
-        item = _item;
+        //item = _item;
         itemCount = _cnt;
-
+        
 
     }
-    private IEnumerator GetUserInfoCoroutine()
+
+    IEnumerator GetItemInfo(string type, string name)
     {
+        string ItemURL = "http://127.0.0.1/getiteminfo.php";
+            WWWForm form = new WWWForm();
+        form.AddField("type", type);
+        form.AddField("name", name);
+
         using (UnityWebRequest www =
-            UnityWebRequest.Post("http://127.0.0.1/getinventory.php", ""))
+            UnityWebRequest.Post(ItemURL, form))
         {
             yield return www.SendWebRequest();
 
@@ -59,7 +64,7 @@ public class Slot : MonoBehaviour
 
                 foreach (DataItem dataScore in dataScores)
                 {
-                    Debug.Log(dataScore.name + " : " + dataScore.type);
+                    Debug.Log(dataScore.name + " : " + dataScore.context);
                 }
             }
         }

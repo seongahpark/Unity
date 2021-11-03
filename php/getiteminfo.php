@@ -12,14 +12,15 @@ if($conn->connect_error) {
 }
 
 $type = $_POST["type"];
-$sql = "SELECT * FROM inven WHERE type = '".$type."' ORDER BY idx";
+$name = $_POST["name"];
+$sql = "SELECT * FROM '".$type."' WHERE name = '".$name."' LIMIT 1";
 $result = $conn->query($sql);
 
 if($result->num_rows > 0) {
 	echo "[";
 	while($row = $result->fetch_assoc()) {
 		//echo "{'id': '" .$row['id']. "', 'pw': '" .$row['pw']. "', 'age': '" .$row['age']. "', 'name': '" .$row['name']. "'},";
-		echo "{'name': '".$row['name']."'},";
+		echo "{'name': '".$row['name']."', 'context': '".$row['context']."'},";
 	}
 	echo "]";
 }
