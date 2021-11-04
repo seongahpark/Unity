@@ -7,6 +7,8 @@ public class agentScr : MonoBehaviour
 {
     NavMeshAgent agent;
     public Transform target;
+    public GameManager gm;
+    public EnemyControl ec;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,7 +18,22 @@ public class agentScr : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        agent.SetDestination(target.position);
+        if (gm.isFever)
+        {
+            Vector3 pos = new Vector3(target.position.x - transform.position.x, 1.5f, target.position.z - transform.position.z);
+            if (pos.magnitude < 10)
+            { pos.x *= -5; pos.z *= -5; }
+            agent.SetDestination(pos);
+        }
+        else
+            agent.SetDestination(target.position);
         //agent.Warp(new Vector3(0, 0, 0));
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Player" && gm.isFever)
+        {
+            Destroy(gameObject);
+        }
     }
 }

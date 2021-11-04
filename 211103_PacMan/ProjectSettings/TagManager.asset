@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Warp
+  - Item
+  - Enemy
+  - FeverItem
   layers:
   - Default
   - TransparentFX

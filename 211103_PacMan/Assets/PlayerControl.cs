@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
+    public GameManager gm;
     private float playerSpeed = 7.0f;
     private bool canWarp = true;
     private float canWarpTime = 1.0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -49,11 +51,23 @@ public class PlayerControl : MonoBehaviour
             canWarp = false;
             StartCoroutine(WaitForWarp());
         }
-    }
 
+        if(other.tag == "FeverItem")
+        {
+            gm.isFever = true;
+        }
+    }
     IEnumerator WaitForWarp()
     {
         yield return new WaitForSeconds(canWarpTime);
         canWarp = true;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == "Enemy" && !gm.isFever)
+        {
+            gm.gameOver = true;
+        }
     }
 }

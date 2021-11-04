@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
-public class BlueEnemyControl : MonoBehaviour
+public class PinkEnemyControl : MonoBehaviour
 {
     NavMeshAgent agent;
-    [SerializeField] private Transform redEnemy;
-    [SerializeField] private Transform Player;
     public GameManager gm;
     public EnemyControl ec;
+    [SerializeField] private Transform Player;
+    private float distance = 10.0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -19,6 +19,8 @@ public class BlueEnemyControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //플레이어의 앞을 막아야되는 상황
+        //Raycast를 이용해서 구현
         if (gm.isFever)
         {
             Vector3 pos = new Vector3(Player.position.x - transform.position.x, 1.5f, Player.position.z - transform.position.z);
@@ -26,21 +28,23 @@ public class BlueEnemyControl : MonoBehaviour
             { pos.x *= -5; pos.z *= -5; }
             agent.SetDestination(pos);
         }
-        else agent.SetDestination(ChkPos());
+        else
+        {
+            if (!ChkPos())
+                agent.SetDestination(Player.position);
+        }
     }
-    //점대칭 위치 구하기
-    /*
-     * 빨강 + 
-     *  (2*빨강 - 플레이어)
-     */
-    private Vector3 ChkPos()
+    private bool ChkPos()
     {
-        Vector3 pos = 2 * Player.transform.position - redEnemy.transform.position;
-        return pos;
+        Vector3 rayOrigin = Player.position;
+        Vector3 rayDir = Player.transform.forward;
+        Debug.Log(Physics.Raycast(rayOrigin, rayDir, distance));
+        return Physics.Raycast(rayOrigin, rayDir, distance);
     }
+
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Player" && gm.isFever)
+        if(collision.gameObject.tag == "Player" && gm.isFever)
         {
             Destroy(gameObject);
         }
