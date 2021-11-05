@@ -9,11 +9,13 @@ public class PinkEnemyControl : MonoBehaviour
     public EnemyControl ec;
     [SerializeField] private Transform Player;
     private float distance = 10.0f;
+    Renderer enemyColor;
 
     // Start is called before the first frame update
     void Start()
     {
         agent = this.GetComponent<NavMeshAgent>();
+        enemyColor = gameObject.GetComponent<Renderer>();
     }
 
     // Update is called once per frame
@@ -23,6 +25,7 @@ public class PinkEnemyControl : MonoBehaviour
         //Raycast를 이용해서 구현
         if (gm.isFever)
         {
+            //ec.FeverTimeEnemy(enemyColor);
             Vector3 pos = new Vector3(Player.position.x - transform.position.x, 1.5f, Player.position.z - transform.position.z);
             if (pos.magnitude < 10)
             { pos.x *= -5; pos.z *= -5; }

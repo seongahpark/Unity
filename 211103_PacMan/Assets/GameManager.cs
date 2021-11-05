@@ -11,10 +11,11 @@ public class GameManager : MonoBehaviour
     public bool gameOver = false;
     public bool gameClear = false;
     public bool isFever = false;
-    private float feverTime = 6.0f;
+    [SerializeField] private float feverTime = 5.0f;
 
     [SerializeField] private GameObject itemManager;
     [SerializeField] private GameObject uiManager;
+    [SerializeField] private Text t_press;
 
     private itemControl[] items;
     private int itemMaxLength;
@@ -30,28 +31,39 @@ public class GameManager : MonoBehaviour
         items = itemManager.GetComponentsInChildren<itemControl>();
         itemMaxLength = items.Length;
         uiManager.SetActive(true);
+        Time.timeScale = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
         chkClear();
-        if ((gameClear || gameOver))
-        {
-            Time.timeScale = 0;
-        }
+        if (!gameStart && Input.GetKeyDown(KeyCode.S)) GameStart();
         if ((gameClear || gameOver) && Input.GetKeyDown(KeyCode.R))
         {
             Restart();
             Time.timeScale = 1;
         }
-        if (isFever) StartCoroutine(IsFeverTime());
+        if (gameOver) GameOver();
+        if (gameClear) GameClear();
+        //if (isFever) StartCoroutine(IsFeverTime());
     }
     static public GameManager getIns
     {
         get { return gm; }
     }
-    
+    private void GameOver()
+    {
+        uiManager.SetActive(true);
+        Time.timeScale = 0;
+        t_press.text = "GAME OVER" + "\n" + "PRESS 'R' TO RESTART";
+    }
+    private void GameStart()
+    {
+        gameStart = true;
+        Time.timeScale = 1;
+        uiManager.SetActive(false);
+    }
     private void Restart()
     {
         SceneManager.LoadScene(0);
@@ -60,6 +72,12 @@ public class GameManager : MonoBehaviour
         gameClear = false;
     }
 
+    private void GameClear()
+    {
+        uiManager.SetActive(true);
+        Time.timeScale = 0;
+        t_press.text = "GAME CLEAR" + "\n" + "PRESS 'R' TO RESTART";
+    }
     private void chkClear()
     {
         items = itemManager.GetComponentsInChildren<itemControl>();
@@ -70,8 +88,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    IEnumerator IsFeverTime()
+    public IEnumerator IsFeverTime()
     {
+        isFever = true;
         yield return new WaitForSeconds(feverTime);
         isFever = false;
     }

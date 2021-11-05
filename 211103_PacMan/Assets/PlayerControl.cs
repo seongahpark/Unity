@@ -8,17 +8,21 @@ public class PlayerControl : MonoBehaviour
     private float playerSpeed = 7.0f;
     private bool canWarp = true;
     private float canWarpTime = 1.0f;
-
+    Renderer playerRenderer;
+    Color playerBasicColor;
     // Start is called before the first frame update
     void Start()
     {
-        
+        playerRenderer = gameObject.GetComponent<Renderer>();
+        playerBasicColor = playerRenderer.material.color;
     }
 
     // Update is called once per frame
     void Update()
     {
         PlayerMove();
+        if (gm.isFever) PlayerIsFever();
+        if (!gm.isFever) PlayerIsNotFever();
     }
 
     private void PlayerMove()
@@ -55,6 +59,8 @@ public class PlayerControl : MonoBehaviour
         if(other.tag == "FeverItem")
         {
             gm.isFever = true;
+            StopCoroutine(gm.IsFeverTime());
+            StartCoroutine(gm.IsFeverTime());
         }
     }
     IEnumerator WaitForWarp()
@@ -69,5 +75,15 @@ public class PlayerControl : MonoBehaviour
         {
             gm.gameOver = true;
         }
+    }
+
+    private void PlayerIsFever()
+    {
+        playerRenderer.material.color = Color.cyan;
+    }
+
+    private void PlayerIsNotFever()
+    {
+        playerRenderer.material.color = playerBasicColor;
     }
 }

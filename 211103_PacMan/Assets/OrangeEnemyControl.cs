@@ -17,6 +17,7 @@ public class OrangeEnemyControl : MonoBehaviour
     public EnemyControl ec;
     [SerializeField] private Transform redEnemy;
     [SerializeField] private Transform Player;
+    Renderer enemyColor;
 
     private float changeTime = 3.0f;
     // Start is called before the first frame update
@@ -24,6 +25,7 @@ public class OrangeEnemyControl : MonoBehaviour
     {
         state = State.red;
         agent = this.GetComponent<NavMeshAgent>();
+        enemyColor = gameObject.GetComponent<Renderer>();
     }
 
     // Update is called once per frame
@@ -31,6 +33,7 @@ public class OrangeEnemyControl : MonoBehaviour
     {
         if (gm.isFever)
         {
+            //ec.FeverTimeEnemy(enemyColor);
             Vector3 pos = new Vector3(Player.position.x - transform.position.x, 1.5f, Player.position.z - transform.position.z);
             if (pos.magnitude < 10)
             { pos.x *= -5; pos.z *= -5; }

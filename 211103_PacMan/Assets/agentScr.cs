@@ -9,10 +9,12 @@ public class agentScr : MonoBehaviour
     public Transform target;
     public GameManager gm;
     public EnemyControl ec;
+    Renderer enemyColor;
     // Start is called before the first frame update
     void Start()
     {
         agent = this.GetComponent<NavMeshAgent>();
+        enemyColor = gameObject.GetComponent<Renderer>();
     }
 
     // Update is called once per frame
@@ -20,6 +22,7 @@ public class agentScr : MonoBehaviour
     {
         if (gm.isFever)
         {
+            //ec.FeverTimeEnemy(enemyColor);
             Vector3 pos = new Vector3(target.position.x - transform.position.x, 1.5f, target.position.z - transform.position.z);
             if (pos.magnitude < 10)
             { pos.x *= -5; pos.z *= -5; }

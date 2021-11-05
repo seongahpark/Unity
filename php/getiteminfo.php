@@ -13,7 +13,7 @@ if($conn->connect_error) {
 
 $type = $_POST["type"];
 $name = $_POST["name"];
-$sql = "SELECT * FROM '".$type."' WHERE name = '".$name."' LIMIT 1";
+$sql = "SELECT * FROM ".$type." WHERE name = '".$name."'";
 $result = $conn->query($sql);
 
 if($result->num_rows > 0) {
@@ -24,7 +24,6 @@ if($result->num_rows > 0) {
 	}
 	echo "]";
 }
-
 $conn->close();
 
 ?>

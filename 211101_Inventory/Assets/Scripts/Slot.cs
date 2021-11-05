@@ -15,7 +15,7 @@ public class Slot : MonoBehaviour
     public class DataItem
     {
         public string name { get; set; }
-        public int context { get; set; }
+        public string context { get; set; }
     }
     // Start is called before the first frame update
     void Start()
@@ -29,16 +29,14 @@ public class Slot : MonoBehaviour
         
     }
 
-    public void AddItem(string name, int _cnt = 1)
+    public void AddItem(string type, string name)
     {
-        //item = _item;
-        itemCount = _cnt;
-        
-
+        StartCoroutine(GetItemInfo(type, name));
     }
 
     IEnumerator GetItemInfo(string type, string name)
     {
+        //Debug.Log("type : " + type + ", name : " + name);
         string ItemURL = "http://127.0.0.1/getiteminfo.php";
             WWWForm form = new WWWForm();
         form.AddField("type", type);
@@ -65,6 +63,7 @@ public class Slot : MonoBehaviour
                 foreach (DataItem dataScore in dataScores)
                 {
                     Debug.Log(dataScore.name + " : " + dataScore.context);
+                    itemImage.sprite = Resources.Load<Sprite>(dataScore.name);
                 }
             }
         }

@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class InventoryControl : MonoBehaviour
 {
@@ -11,6 +13,7 @@ public class InventoryControl : MonoBehaviour
     [SerializeField] private static bool invenctoryActivated = false;
     [SerializeField] private GameObject inventory;
     [SerializeField] private GameObject slotParent; //grid setting
+    public string type = "weapon"; //default°ª
 
     private Slot[] slots; // ½½·Ô ¹è¿­
 
@@ -30,7 +33,7 @@ public class InventoryControl : MonoBehaviour
     void Update()
     {
         ChkInventoryOpen();
-        StartCoroutine(GetInventoryInfo("weapon"));
+        //StartCoroutine(GetInventoryInfo("weapon"));
     }
 
     private void ChkInventoryOpen()
@@ -38,29 +41,42 @@ public class InventoryControl : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.I))
         {
             invenctoryActivated = !invenctoryActivated;
-            if (invenctoryActivated) OpenInven();
-            else CloseInven();
         }
+        if (invenctoryActivated) OpenInven();
+        else CloseInven();
     }
 
     private void OpenInven()
     {
         inventory.SetActive(true);
+        StartCoroutine(GetInventoryInfo(type));
     }
     private void CloseInven()
     {
         inventory.SetActive(false);
     }
 
-    private void ShowItems(string name, int _count = 1)
+    public void ClickBtn()
+    {
+        cleanInven();
+        GameObject clickBtn = EventSystem.current.currentSelectedGameObject;
+        type = clickBtn.GetComponentInChildren<Text>().text.ToLower();
+        StartCoroutine(GetInventoryInfo(type));
+    }
+
+    private void cleanInven()
     {
         for(int i=0; i<slots.Length; i++)
         {
-            if(slots[i].item == null)
-            {
-                slots[i].AddItem(name, _count);
-                return;
-            }
+            slots[i].itemImage.sprite = null;
+        }
+    }
+    private void ShowItems(string name, int index)
+    {
+        if(!slots[index].itemImage.sprite)
+        {
+            slots[index].AddItem(type, name);
+            return;
         }
     }
     IEnumerator GetInventoryInfo(string type)
@@ -80,7 +96,7 @@ public class InventoryControl : MonoBehaviour
             }
             else
             {
-                Debug.Log(www.downloadHandler.text);
+                //Debug.Log(www.downloadHandler.text);
                 string data = www.downloadHandler.text;
 
                 List<DataItem> dataScores =
@@ -88,8 +104,9 @@ public class InventoryControl : MonoBehaviour
 
                 foreach (DataItem dataScore in dataScores)
                 {
-                    Debug.Log(dataScore.name);
-                    ShowItems(dataScore.name);
+                    //Debug.Log(dataScore.name);
+                    int index = dataScores.IndexOf(dataScore);
+                    ShowItems(dataScore.name, index);
                 }
             }
         }

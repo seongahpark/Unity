@@ -10,7 +10,7 @@ public class EnemyControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -30,5 +30,10 @@ public class EnemyControl : MonoBehaviour
         Vector3 dir = trans.position - player.position;
         if (dir.magnitude < 20) return true;
         return false;
+    }
+
+    public void FeverTimeEnemy(Renderer renderer)
+    {
+        renderer.material.color = Color.magenta;
     }
 }
