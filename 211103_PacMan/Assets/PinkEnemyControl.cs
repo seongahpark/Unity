@@ -41,7 +41,6 @@ public class PinkEnemyControl : MonoBehaviour
     {
         Vector3 rayOrigin = Player.position;
         Vector3 rayDir = Player.transform.forward;
-        Debug.Log(Physics.Raycast(rayOrigin, rayDir, distance));
         return Physics.Raycast(rayOrigin, rayDir, distance);
     }
 
