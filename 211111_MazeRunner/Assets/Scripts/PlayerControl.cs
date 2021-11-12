@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
+    public GameManager gm;
     private float Speed = 5.0f;
     private float rotSpeed = 90.0f;
     public Rigidbody body;
@@ -15,6 +16,11 @@ public class PlayerControl : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+        PlayerMove();
+    }
+
+    private void PlayerMove()
     {
         Vector3 pos = transform.position;
         Vector3 rot = transform.rotation.eulerAngles;
@@ -34,7 +40,20 @@ public class PlayerControl : MonoBehaviour
         {
             transform.Translate(Vector3.back * Time.deltaTime * Speed);
         }
-        
+
         body.MoveRotation(Quaternion.Euler(rot));
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Finish")
+        {
+            gm.gameClear = true;
+        }
+
+        if(other.tag == "Item")
+        {
+            gm.GetItem();
+        }
     }
 }
