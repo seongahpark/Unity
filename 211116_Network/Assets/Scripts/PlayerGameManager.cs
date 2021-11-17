@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 public class PlayerGameManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private GameObject playerPrefab = null;
+    [SerializeField] private Color[] colors = null;
 
     // 각 클라이언트 마다 생성된 플레이어 게임 오브젝트를 리스트로 관리
     private List<GameObject> playerGoList = new List<GameObject>();
@@ -29,6 +30,7 @@ public class PlayerGameManager : MonoBehaviourPunCallbacks
                 0);
             go.GetComponent<PlayerCtrl>().SetMaterial(PhotonNetwork.CurrentRoom.PlayerCount);
         }
+
     }
 
     // PhotonNetwork.LeaveRooom 함수가 호출되면 호출
@@ -94,6 +96,25 @@ public class PlayerGameManager : MonoBehaviourPunCallbacks
                     photonViews[j].gameObject.name = "Player_" + photonViews[j].Owner.NickName;
                     // 실제 게임오브젝트를 리스트에 추가
                     playerGoList.Add(photonViews[j].gameObject);
+
+                    //유저 색 적용하기
+                    photonViews[j].gameObject.GetComponent<MeshRenderer>().material.color = colors[playerNum-1];
+                    
+                    //유저 닉네임 표시하기
+                    TextMesh t_mesh = photonViews[j].gameObject.GetComponentInChildren<TextMesh>();
+                    t_mesh.text = photonViews[j].Owner.NickName;
+
+                    //유저 닉네임 위치 고정하기 -> 미해결, cam 위치로 고정이 안됨
+                    Camera cam = Camera.main;
+                    //Transform nick_trans = photonViews[j].gameObject.GetComponentInChildren<Transform>();
+                    //nick_trans.transform.rotation = cam.transform.rotation;
+                    t_mesh.transform.rotation = cam.transform.rotation;
+                    Debug.LogError("cam rot : " + cam.transform.rotation);
+
+                    Vector3 pos = photonViews[j].gameObject.transform.position;
+                    pos.z += 6;
+                    t_mesh.transform.position = pos;
+
                 }
             }
         }

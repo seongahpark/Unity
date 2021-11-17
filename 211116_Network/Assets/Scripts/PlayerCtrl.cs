@@ -14,13 +14,19 @@ public class PlayerCtrl : MonoBehaviourPun, IPunInstantiateMagicCallback
     [SerializeField] private Color[] colors = null;
     [SerializeField] private float speed = 3.0f;
 
+    //NICKNAME Ç¥½Ã
+    [SerializeField] private GameObject t_nick;
+    TextMesh t_mesh;
+    public Camera cam;
+
     private int hp = 3;
     private bool isDead = false;
-
 
     private void Awake()
     {
         rb = this.GetComponent<Rigidbody>();
+        t_mesh = t_nick.GetComponent<TextMesh>();
+        cam = Camera.main;
     }
 
     private void Start()
@@ -45,6 +51,17 @@ public class PlayerCtrl : MonoBehaviourPun, IPunInstantiateMagicCallback
         if (Input.GetMouseButtonDown(0)) ShootBullet();
 
         LookAtMouseCursor();
+
+        SetNick();
+    }
+
+    private void SetNick()
+    {
+        t_mesh.text = PhotonNetwork.NickName;
+        t_nick.transform.rotation = cam.transform.rotation;
+        Vector3 pos = this.transform.position;
+        pos.z += 6;
+        t_nick.transform.position = pos;
     }
 
     public void SetMaterial(int _playerNum)

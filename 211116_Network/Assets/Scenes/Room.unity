@@ -228,7 +228,7 @@ GameObject:
   - component: {fileID: 1335848199}
   - component: {fileID: 1335848198}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: MainCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -330,6 +330,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 3551298303995169432, guid: 925cb401d4610b94893f28835d8aaaae, type: 3}
+  colors:
+  - {r: 1, g: 0, b: 0, a: 0}
+  - {r: 1, g: 0, b: 0.9351678, a: 0}
+  - {r: 0, g: 0.18392253, b: 1, a: 0}
+  - {r: 0, g: 1, b: 0.10700154, a: 0}
 --- !u!4 &1861359835
 Transform:
   m_ObjectHideFlags: 0
