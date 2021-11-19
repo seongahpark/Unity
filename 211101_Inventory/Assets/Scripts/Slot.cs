@@ -4,13 +4,16 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using Newtonsoft.Json;
+using UnityEngine.EventSystems;
 
-public class Slot : MonoBehaviour
+public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    public Item item;
-    public int itemCount;
-    public Text t_count;
     public Image itemImage;
+
+    [SerializeField] private SlotToolTip slotToolTip;
+
+    public string t_name;
+    public string t_context;
 
     public class DataItem
     {
@@ -20,7 +23,7 @@ public class Slot : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        slotToolTip = GameObject.Find("SlotToolTip").GetComponent<SlotToolTip>();
     }
 
     // Update is called once per frame
@@ -62,10 +65,23 @@ public class Slot : MonoBehaviour
 
                 foreach (DataItem dataScore in dataScores)
                 {
-                    Debug.Log(dataScore.name + " : " + dataScore.context);
+                    //Debug.Log(dataScore.name + " : " + dataScore.context);
+                    t_name = dataScore.name;
+                    t_context = dataScore.context;
                     itemImage.sprite = Resources.Load<Sprite>(dataScore.name);
                 }
             }
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if(t_name != "")
+            slotToolTip.ShowToolTip(t_name, t_context, transform.position);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        slotToolTip.HideToolTip();
     }
 }

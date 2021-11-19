@@ -8,11 +8,10 @@ using UnityEngine.UI;
 
 public class InventoryControl : MonoBehaviour
 {
-    //state 인벤토리 타입, 0 : 무기, 1 : 아이템
-    [SerializeField] private int state = 0;
     [SerializeField] private static bool invenctoryActivated = false;
     [SerializeField] private GameObject inventory;
     [SerializeField] private GameObject slotParent; //grid setting
+    [SerializeField] private SlotToolTip slotToolTip;
     public string type = "weapon"; //default값
 
     private Slot[] slots; // 슬롯 배열
@@ -27,13 +26,13 @@ public class InventoryControl : MonoBehaviour
     void Start()
     {
         slots = slotParent.GetComponentsInChildren<Slot>();
+        slotToolTip.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
         ChkInventoryOpen();
-        //StartCoroutine(GetInventoryInfo("weapon"));
     }
 
     private void ChkInventoryOpen()
@@ -69,6 +68,7 @@ public class InventoryControl : MonoBehaviour
         for(int i=0; i<slots.Length; i++)
         {
             slots[i].itemImage.sprite = null;
+            slots[i].t_name = "";
         }
     }
     private void ShowItems(string name, int index)

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 public class Login : MonoBehaviour
 {
     public GameObject LoginUI;
@@ -16,6 +16,8 @@ public class Login : MonoBehaviour
     private string id;
     private string pw;
 
+    private bool loginState = false;
+
     private string LoginURL = "http://127.0.0.1/getuserinfo.php";
     // Start is called before the first frame update
     void Start()
@@ -26,9 +28,16 @@ public class Login : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        chkLoginState();
     }
 
+    private void chkLoginState()
+    {
+        if (loginState)
+        {
+            StartCoroutine(waitForLogin());
+        }
+    }
     private void LoginBtnClick()
     {
         id = input_id.text;
@@ -53,6 +62,14 @@ public class Login : MonoBehaviour
 
         t_result.gameObject.SetActive(true);
         t_result.text = www.text;
+
+        if (www.text == "Login Success") loginState = true;
         Debug.Log(www.text);
+    }
+
+    IEnumerator waitForLogin()
+    {
+        yield return new WaitForSeconds(3.0f);
+        SceneManager.LoadScene("Inventory");
     }
 }
