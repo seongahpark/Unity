@@ -103,18 +103,6 @@ public class PlayerGameManager : MonoBehaviourPunCallbacks
                     //유저 닉네임 표시하기
                     TextMesh t_mesh = photonViews[j].gameObject.GetComponentInChildren<TextMesh>();
                     t_mesh.text = photonViews[j].Owner.NickName;
-
-                    //유저 닉네임 위치 고정하기 -> 미해결, cam 위치로 고정이 안됨
-                    Camera cam = Camera.main;
-                    //Transform nick_trans = photonViews[j].gameObject.GetComponentInChildren<Transform>();
-                    //nick_trans.transform.rotation = cam.transform.rotation;
-                    t_mesh.transform.rotation = cam.transform.rotation;
-                    Debug.LogError("cam rot : " + cam.transform.rotation);
-
-                    Vector3 pos = photonViews[j].gameObject.transform.position;
-                    pos.z += 6;
-                    t_mesh.transform.position = pos;
-
                 }
             }
         }
