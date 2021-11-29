@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1307067509905157276}
   - component: {fileID: 1307067509905157277}
   - component: {fileID: -585608101530247367}
+  - component: {fileID: 2935814697430763964}
   m_Layer: 0
   m_Name: P_ball
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1307067509905157278}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.241657, y: -2.559013, z: 0}
+  m_LocalPosition: {x: 1.241657, y: -10.37, z: 0}
   m_LocalScale: {x: 1.7, y: 1.7, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -129,3 +130,15 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.5977913, y: 0.64457077}
   m_EdgeRadius: 0
+--- !u!114 &2935814697430763964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1307067509905157278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28212bce5dea9e9469db3f9c8f376680, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
