@@ -5,6 +5,7 @@ using UnityEngine;
 public class BossJinhillaControl : MonoBehaviour
 {
     private Animator anim;
+    private SpriteRenderer render;
 
     public bool canAttack = false;
     
@@ -16,8 +17,9 @@ public class BossJinhillaControl : MonoBehaviour
     [SerializeField] private bool isMove = false;
     [SerializeField] private bool isStand = true;
 
+    private bool unHittable = false;
+
     [SerializeField] private Transform player;
-    [SerializeField] private LayerMask playerLayer;
     [SerializeField] private GameObject greenBone;
     [SerializeField] private GameObject purpleBone;
     [SerializeField] private GameObject ball;
@@ -33,6 +35,8 @@ public class BossJinhillaControl : MonoBehaviour
     void Start()
     {
         anim = GetComponent<Animator>();
+        render = GetComponent<SpriteRenderer>();
+
         JinhillaAttack1();
         InvokeRepeating("MakeSmoke", 1.0f, 7.0f); //독구름 계속 생성
     }
@@ -82,6 +86,10 @@ public class BossJinhillaControl : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F8))
         {
             JinhillaSkill5();
+        }
+        if (Input.GetKeyDown(KeyCode.F9))
+        {
+            StartCoroutine(JinhillaTeleport());
         }
         //ChkBossMotion();
         //if (!canAttack && isMove) BossMove();
@@ -249,9 +257,68 @@ public class BossJinhillaControl : MonoBehaviour
         Vector3 pos = new Vector3(randX, -2.16f, 0);
         Instantiate(monster, pos, transform.rotation);
     }
-    private void JinhillaSkill3()
+    private void JinhillaSkill3() // 순간이동 (플레이어 왼, 오, 겹치게)
     {
         anim.SetTrigger("skill3");
+    }
+
+    IEnumerator JinhillaTeleport()
+    {
+        anim.SetTrigger("skill3");
+        unHittable = true; // 텔포동안은 무적
+        yield return new WaitForSeconds(1.0f);
+
+        render.enabled = false;
+        float randTelTime = Random.Range(0.5f, 1.5f);
+        yield return new WaitForSeconds(randTelTime);
+
+        render.enabled = true;
+        anim.SetTrigger("skill3_after");
+        unHittable = false;
+
+        //등장위치 나타내는 곳
+        //플레이어 끝 : 10.9 ~ -12.58
+        Vector3 playerPos = player.position;
+        Vector3 bossPos = transform.position;
+        if(playerPos.x > -8.5f && playerPos.x < 6.7)
+        {
+            int randTel = Random.Range(0, 3);
+            switch (randTel)
+            {
+                case 0: //왼쪽, 오른쪽 바라봐야 함
+                    bossPos.x = playerPos.x - 2.24f;
+                    transform.localEulerAngles = new Vector3(0, 180, 0);
+                    break;
+                case 1: //오른쪽
+                    bossPos.x = playerPos.x + 3.24f;
+                    transform.localEulerAngles = new Vector3(0, 0, 0);
+                    break;
+                case 2: //겹치게
+                    bossPos.x = playerPos.x;
+                    transform.localEulerAngles = new Vector3(0, 0, 0);
+                    break;
+            }
+        }else if(playerPos.x <= -8.5f)
+        {
+            int randTel = Random.Range(0, 2);
+            switch (randTel)
+            {
+                case 0: //오른쪽
+                    bossPos.x = playerPos.x + 3.24f;
+                    transform.localEulerAngles = new Vector3(0, 0, 0);
+                    break;
+                case 1: //겹치게
+                    bossPos.x = playerPos.x;
+                    transform.localEulerAngles = new Vector3(0, 0, 0);
+                    break;
+            }
+        }
+        else
+        {
+            bossPos.x = playerPos.x;
+            transform.localEulerAngles = new Vector3(0, 0, 0);
+        }
+        transform.position = bossPos;
     }
 
     private void JinhillaSkill5() // 스우, 데미안 사령 소환
