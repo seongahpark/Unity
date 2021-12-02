@@ -7,13 +7,12 @@ public class HandControl : MonoBehaviour
 {
     //0.5초 간격으로 손 하나씩 다 나옴
     List<GameObject> Hand = new List<GameObject>();
-    //Pooling으로 Hand 제어
-    Queue<GameObject> HandPool = new Queue<GameObject>();
 
     static private int ranLength = 7;
     private int[] ranArr = Enumerable.Range(0, ranLength).ToArray();
 
     [SerializeField] private bool canShowHands = true;
+
 
     private void Awake()
     {
@@ -28,6 +27,7 @@ public class HandControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         if (canShowHands) {
             MakeOrder();
             StartCoroutine(ShowHands()); 
@@ -56,7 +56,6 @@ public class HandControl : MonoBehaviour
 
     IEnumerator ShowHands()
     {
-        Debug.Log("show hands");
         canShowHands = false;
         for(int i=0; i<ranLength; i++)
         {
@@ -65,7 +64,7 @@ public class HandControl : MonoBehaviour
             yield return new WaitForSeconds(0.3f);
         }
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(3.0f);
         canShowHands = true;
     }
 }
