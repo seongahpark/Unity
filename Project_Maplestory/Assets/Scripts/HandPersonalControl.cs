@@ -12,6 +12,8 @@ public class HandPersonalControl : MonoBehaviour
     private bool stringEnd = false;
 
     private CandleSetControl cc;
+    [SerializeField] private GameObject[] fragment = new GameObject[3];
+    
     private void Awake()
     {
         anim = gameObject.GetComponent<Animator>();
