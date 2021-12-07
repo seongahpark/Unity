@@ -15,6 +15,9 @@ public class PlayerControl : MonoBehaviour
 
     private Rigidbody2D rb;
 
+    [SerializeField] HandPersonalControl hpc;
+    [SerializeField] DeathCountContrl dc;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -45,6 +48,14 @@ public class PlayerControl : MonoBehaviour
         {
             rb.velocity = Vector2.zero;
             rb.AddForce(new Vector2(0, jumpForce));
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag == "String" && hpc.isHit)
+        {
+            dc.redCnt++;
         }
     }
 }

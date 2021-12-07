@@ -6,8 +6,8 @@ public class HandPersonalControl : MonoBehaviour
 {
     private Animator anim;
     private Animator anim_string;
-    private bool isHit = false;
-    private bool canHit = true;
+    public bool isHit = false;
+    [SerializeField] private bool canHit = false;
     private GameObject stringObj = null;
     private bool stringEnd = false;
 
@@ -53,6 +53,10 @@ public class HandPersonalControl : MonoBehaviour
         }
     }
 
+    private void setCanHit()
+    {
+        canHit = true;
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.tag == "Player" && canHit)
@@ -62,12 +66,15 @@ public class HandPersonalControl : MonoBehaviour
             isHit = true;
             canHit = false;
             cc.flameCnt++;
+            Invoke("MakeFragments", 6.5f);
         }
     }
 
     IEnumerator GoToEnd()
     {
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(0.4f);
+        setCanHit();
+        yield return new WaitForSeconds(0.5f);
         if (!isHit)
         {
             anim.SetTrigger("end");
@@ -85,8 +92,19 @@ public class HandPersonalControl : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         stringEnd = false;
         isHit = false;
-        canHit = true;
+        canHit = false;
         transform.gameObject.SetActive(false);
         stringObj.SetActive(false);
+    }
+
+    private void MakeFragments()
+    {
+        Vector3 pos = this.transform.position;
+        pos.x -= 2.0f;
+        for(int i=0; i<3; i++)
+        {
+            Instantiate(fragment[i], pos, Quaternion.identity);
+            pos.x += 2.0f;
+        }
     }
 }
