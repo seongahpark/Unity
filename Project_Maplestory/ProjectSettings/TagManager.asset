@@ -9,6 +9,7 @@ TagManager:
   - Smoke
   - Boss
   - Candle
+  - DeathCount
   layers:
   - Default
   - TransparentFX

@@ -13,12 +13,14 @@ public class HandPersonalControl : MonoBehaviour
 
     private CandleSetControl cc;
     [SerializeField] private GameObject[] fragment = new GameObject[3];
-    
+    private PlayerControl pc;
+
     private void Awake()
     {
         anim = gameObject.GetComponent<Animator>();
         stringObj = transform.GetChild(0).gameObject;
         cc = GameObject.FindWithTag("Candle").GetComponent<CandleSetControl>();
+        pc = GameObject.FindWithTag("Player").GetComponent<PlayerControl>();
     }
     // Start is called before the first frame update
     void Start()
@@ -64,6 +66,7 @@ public class HandPersonalControl : MonoBehaviour
             Debug.Log("collision");
             anim.SetTrigger("attack");
             isHit = true;
+            pc.playerHit = true;
             canHit = false;
             cc.flameCnt++;
             Invoke("MakeFragments", 6.5f);
@@ -93,6 +96,7 @@ public class HandPersonalControl : MonoBehaviour
         stringEnd = false;
         isHit = false;
         canHit = false;
+        pc.playerHit = false;
         transform.gameObject.SetActive(false);
         stringObj.SetActive(false);
     }

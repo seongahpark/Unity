@@ -7,11 +7,19 @@ public class AltarControl : MonoBehaviour
     private Animator anim;
     private bool playerIn = false;
     [SerializeField] private int cnt = 16;
+    [SerializeField] private bool noDestory = true; // 제단이 생성되자마자 진힐라가 밟는 것을 금지
+    [SerializeField] CandleSetControl csc;
     // Start is called before the first frame update
+    private void Awake()
+    {
+        csc = GameObject.FindWithTag("Candle").GetComponent<CandleSetControl>();
+    }
     void Start()
     {
         anim = gameObject.GetComponent<Animator>();
         cnt = 16;
+        noDestory = true;
+        Invoke("DoNotDestory", 2.0f);
     }
 
     // Update is called once per frame
@@ -21,6 +29,10 @@ public class AltarControl : MonoBehaviour
         if (playerIn && Input.GetKeyDown(KeyCode.Space)) cnt--;
     }
 
+    private void DoNotDestory()
+    {
+        noDestory = false;
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.tag == "Player")
@@ -28,10 +40,10 @@ public class AltarControl : MonoBehaviour
             playerIn = true;
         }
 
-        if(collision.gameObject.tag == "Boss")
+        if(collision.gameObject.tag == "Boss" && !noDestory)
         {
             Debug.LogError("Destoryed");
-            Invoke("DestroyAltar", 0.5f);
+            StartCoroutine(DestroyAltar());
         }
     }
 
@@ -47,7 +59,10 @@ public class AltarControl : MonoBehaviour
         if(cnt < 0)
         {
             anim.SetTrigger("go_success");
-        }else if(cnt < 4)
+            csc.ResetCandle();
+            Destroy(gameObject, 0.5f);
+        }
+        else if(cnt < 4)
         {
             anim.SetTrigger("go_stand3");
         }else if(cnt < 8)
@@ -59,8 +74,9 @@ public class AltarControl : MonoBehaviour
         }
     }
 
-    private void DestroyAltar()
+    IEnumerator DestroyAltar()
     {
+        yield return new WaitForSeconds(0.5f);
         if (cnt > 12)
         {
             anim.SetTrigger("go_fail0");
@@ -77,6 +93,8 @@ public class AltarControl : MonoBehaviour
         {
             anim.SetTrigger("go_fail3");
         }
-        Destroy(gameObject, 0.8f);
+        yield return new WaitForSeconds(1.5f);
+        csc.altarOn = false;
+        Destroy(gameObject);
     }
 }

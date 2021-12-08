@@ -6,8 +6,10 @@ public class CandleSetControl : MonoBehaviour
 {
     List<GameObject> candle = new List<GameObject>();
     [SerializeField] private GameManager gm;
+    [SerializeField] private GameObject altar;
     private int candleCnt = 3; //default
     private int maxCandleCnt = 10;
+    public bool altarOn = false;
 
     public int flameCnt = 0;
     private void Awake()
@@ -26,6 +28,7 @@ public class CandleSetControl : MonoBehaviour
     {
         ShowCandle();
         if(maxCandleCnt > flameCnt) GetFire();
+        MakeAltar();
     }
 
     private void GetCandle()
@@ -62,12 +65,37 @@ public class CandleSetControl : MonoBehaviour
 
     private void GetFire()
     {
+        if (flameCnt >= candleCnt) flameCnt = candleCnt;
         //candle[0].transform.GetChild(0);
         for(int i=0; i<flameCnt; i++)
         {
             GameObject flame = candle[i].transform.GetChild(0).gameObject;
             Animator flameAnim = flame.GetComponent<Animator>();
             flame.SetActive(true);
+        }
+    }
+
+    private void MakeAltar()
+    {
+        Debug.Log(flameCnt + ", " + candleCnt + ", " + altarOn);
+        if(flameCnt >= candleCnt && !altarOn)
+        {
+            altarOn = true;
+            //제단 범위 (-9.98~ 10.23, -1.48, 0)
+            float randX = Random.Range(-9.98f, 10.23f);
+            Vector3 pos = new Vector3(randX, -1.48f, 0);
+            Instantiate(altar, pos, Quaternion.identity);
+        }
+    }
+
+    public void ResetCandle()
+    {
+        altarOn = false;
+        flameCnt = 0;
+        for (int i = 0; i < candleCnt; i++)
+        {
+            GameObject flame = candle[i].transform.GetChild(0).gameObject;
+            flame.SetActive(false);
         }
     }
 }

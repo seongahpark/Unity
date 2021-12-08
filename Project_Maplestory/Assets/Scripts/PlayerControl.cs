@@ -13,14 +13,17 @@ public class PlayerControl : MonoBehaviour
     private bool isTouchLeft = false;
     private bool isGround = false;
 
+    [SerializeField] private bool isStun = false;
+    public bool playerHit = false;
     private Rigidbody2D rb;
 
-    [SerializeField] HandPersonalControl hpc;
+    [SerializeField] HandPersonalControl[] hpc = new HandPersonalControl[7];
     [SerializeField] DeathCountContrl dc;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        dc = GameObject.FindWithTag("DeathCount").GetComponent<DeathCountContrl>();
     }
     // Start is called before the first frame update
     void Start()
@@ -31,7 +34,7 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        PlayerMove();
+        if(!isStun) PlayerMove();
     }
 
     private void PlayerMove()
@@ -53,9 +56,18 @@ public class PlayerControl : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.tag == "String" && hpc.isHit)
+        // hpc.isHit
+        if (collision.gameObject.tag == "String" && playerHit)
         {
             dc.redCnt++;
+            StartCoroutine(StunState());
         }
+    }
+
+    IEnumerator StunState()
+    {
+        isStun = true;
+        yield return new WaitForSeconds(2.0f);
+        isStun = false;
     }
 }
