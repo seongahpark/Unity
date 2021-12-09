@@ -9,10 +9,12 @@ public class AltarControl : MonoBehaviour
     [SerializeField] private int cnt = 16;
     [SerializeField] private bool noDestory = true; // 제단이 생성되자마자 진힐라가 밟는 것을 금지
     [SerializeField] CandleSetControl csc;
+    [SerializeField] DeathCountContrl dc;
     // Start is called before the first frame update
     private void Awake()
     {
         csc = GameObject.FindWithTag("Candle").GetComponent<CandleSetControl>();
+        dc = GameObject.FindWithTag("DeathCount").GetComponent<DeathCountContrl>();
     }
     void Start()
     {
@@ -49,9 +51,29 @@ public class AltarControl : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if(collision.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Boss" && !noDestory)
+        {
+            Debug.LogError("Destoryed");
+            StartCoroutine(DestroyAltar());
+        }
+
+        if (collision.gameObject.tag == "Player")
         {
             playerIn = false;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Player")
+        {
+            playerIn = true;
+        }
+
+        if (collision.gameObject.tag == "Boss" && !noDestory)
+        {
+            Debug.LogError("Destoryed");
+            StartCoroutine(DestroyAltar());
         }
     }
     private void ChkAltarState()
@@ -60,6 +82,8 @@ public class AltarControl : MonoBehaviour
         {
             anim.SetTrigger("go_success");
             csc.ResetCandle();
+            dc.redCnt = 0;
+            dc.DCRedToWhite();
             Destroy(gameObject, 0.5f);
         }
         else if(cnt < 4)

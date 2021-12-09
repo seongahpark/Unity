@@ -42,7 +42,6 @@ public class CandleSetControl : MonoBehaviour
     private void GetCandleCnt()
     {
         candleCnt = Mathf.CeilToInt(gm.playerCnt * 5.0f / 2.0f);
-        Debug.Log(candleCnt);
     }
 
     private void ShowCandle()

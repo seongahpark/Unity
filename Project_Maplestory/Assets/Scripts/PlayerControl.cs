@@ -60,6 +60,7 @@ public class PlayerControl : MonoBehaviour
         if (collision.gameObject.tag == "String" && playerHit)
         {
             dc.redCnt++;
+            dc.DCWhiteToRed();
             StartCoroutine(StunState());
         }
     }
