@@ -17,6 +17,8 @@ public class BossJinhillaControl : MonoBehaviour
     [SerializeField] private bool isMove = false;
     [SerializeField] private bool isStand = true;
 
+    private int monsterCnt = 0;
+
     private bool unHittable = false;
 
     [SerializeField] private Transform player;
@@ -44,7 +46,22 @@ public class BossJinhillaControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        DebugChkSkill();
+        ChkBossPage();
+        //ChkBossMotion();
+        //if (!canAttack && isMove) BossMove();
+        //if (canAttack && !isMove)
+        //{
+        //    anim.SetBool("move", false);
+        //    if (page == 1)
+        //    {
+        //        AttackInPage1();
+        //    }
+        //}
+    }
 
+    private void DebugChkSkill()
+    {
         if (Input.GetKeyDown(KeyCode.K))
         {
             JinhillaAttack1();
@@ -91,18 +108,7 @@ public class BossJinhillaControl : MonoBehaviour
         {
             StartCoroutine(JinhillaTeleport());
         }
-        //ChkBossMotion();
-        //if (!canAttack && isMove) BossMove();
-        //if (canAttack && !isMove)
-        //{
-        //    anim.SetBool("move", false);
-        //    if (page == 1)
-        //    {
-        //        AttackInPage1();
-        //    }
-        //}
     }
-
     private void ChkBossMotion()
     {
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jinhilla_move"))
@@ -135,23 +141,28 @@ public class BossJinhillaControl : MonoBehaviour
         }       
     }
 
+    private void ChkBossPage()
+    {
+        if (page == 1) AttackInPage1();
+        else if (page == 2) AttackInPage2();
+    }
     private void AttackInPage1()
     {
-        int rand = Random.Range(0, 3);
-        if (rand == 0) anim.SetTrigger("attack3");
-        else if (rand == 1) anim.SetTrigger("attack4");
-        else if (rand == 2) anim.SetTrigger("attack9");
-        //StartCoroutine(WaitForAfter(attackDelay));
+        int rand = Random.Range(0, 4);
+        if (rand == 0) JinhillaAttack3();
+        else if (rand == 1) JinhillaAttack4();
+        else if (rand == 2) JinhillaAttack9();
+        else if (rand == 3 && monsterCnt < 3) MakeMonster();
     }
 
     private void AttackInPage2()
     {
-        int rand = Random.Range(0, 3);
-        if (rand == 0) anim.SetTrigger("attack3"); //파란 바인드
-        else if (rand == 1) anim.SetTrigger("attack5"); //고근
-        else if (rand == 2) anim.SetTrigger("attack1"); //초록가시 
-        else if (rand == 3) anim.SetTrigger("attack7"); //보라가시
-        //StartCoroutine(WaitForAfter(attackDelay));
+        int rand = Random.Range(0, 5);
+        if (rand == 0) JinhillaAttack3(); //파란 바인드
+        else if (rand == 1) JinhillaAttack5(); //고근
+        else if (rand == 2) JinhillaAttack1(); //초록가시 
+        else if (rand == 3) JinhillaAttack7(); //보라가시
+        else if (rand == 4 && monsterCnt < 3) MakeMonster();
     }
 
     IEnumerator BossIsNotMove()
@@ -167,6 +178,11 @@ public class BossJinhillaControl : MonoBehaviour
         OnCollider(i);
         yield return new WaitForSeconds(time2);
         OffCollider(i);
+    }
+
+    IEnumerator WaitForAfter(float time) // 델리게이트로 온오프 쓰도록..?
+    {
+        yield return new WaitForSeconds(time);
     }
     private void JinhillaStand()
     {
@@ -235,7 +251,7 @@ public class BossJinhillaControl : MonoBehaviour
     }
 
     /////////////// Skill ///////////////////
-    private void JinhillaSkill1() // 욕망의 현신, 독구름 소환
+    private void JinhillaSkill1() // 욕망의 현신 소환
     {
         anim.SetTrigger("skill1");
         Invoke("MakeMonster", 1.0f);
@@ -252,6 +268,7 @@ public class BossJinhillaControl : MonoBehaviour
 
     private void MakeMonster()
     {
+        monsterCnt++;
         // x 범위 : -9.48 ~ 9.51
         float randX = Random.Range(-9.48f, 9.51f);
         Vector3 pos = new Vector3(randX, -2.16f, 0);

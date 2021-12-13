@@ -34,4 +34,13 @@ public class BossDetectPlayer : MonoBehaviour
             Debug.Log("can't Attack");
         }
     }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Player")
+        {
+            bc.canAttack = true;
+            Debug.Log("canAttack");
+        }
+    }
 }
