@@ -16,6 +16,8 @@ public class BossJinhillaControl : MonoBehaviour
     private bool lookAtLeft = true;
     [SerializeField] private bool isMove = false;
     [SerializeField] private bool isStand = true;
+    private int skillCnt = 0; // 스킬은 5번까지만 쓸 수 있도록 함
+
 
     private int monsterCnt = 0;
 
@@ -47,19 +49,22 @@ public class BossJinhillaControl : MonoBehaviour
     void Update()
     {
         DebugChkSkill();
-        ChkBossPage();
-        //ChkBossMotion();
-        //if (!canAttack && isMove) BossMove();
-        //if (canAttack && !isMove)
-        //{
-        //    anim.SetBool("move", false);
-        //    if (page == 1)
-        //    {
-        //        AttackInPage1();
-        //    }
-        //}
+        BossAI();
     }
 
+    private void BossAI() // 보스 전반적인 움직임 제어
+    {
+        if (!canAttack)
+        {
+            if (isStand) StartCoroutine(BossIsNotMove());
+            if (isMove) StartCoroutine(BossMove());
+            if (skillCnt >= 5) skillCnt = 0;
+        }
+        if (canAttack && skillCnt < 5)
+        {
+            ChkBossPage();
+        }
+    }
     private void DebugChkSkill()
     {
         if (Input.GetKeyDown(KeyCode.K))
@@ -109,24 +114,34 @@ public class BossJinhillaControl : MonoBehaviour
             StartCoroutine(JinhillaTeleport());
         }
     }
-    private void ChkBossMotion()
+    private void ChkBossPage()
     {
-        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jinhilla_move"))
-        {
-            isMove = true;
-            canAttack = false;
-        }
-        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jinhilla_stand"))
-        {
-            StartCoroutine(BossIsNotMove());
-        }
-        else
-        {
-            isMove = false;
-        }
+        if (page == 1) StartCoroutine(AttackInPage1());
+        else if (page == 2) AttackInPage2();
     }
-    //애니메이션 상태가 move 일 때만 동작하도록?
-    private void BossMove()
+    IEnumerator AttackInPage1()
+    {
+        canAttack = false;
+        int rand = Random.Range(0, 4);
+        if (rand == 0) JinhillaAttack3();
+        else if (rand == 1) JinhillaAttack4();
+        else if (rand == 2) JinhillaAttack9();
+        else if (rand == 3 && monsterCnt < 3) MakeMonster();
+        skillCnt++;
+        yield return new WaitForSeconds(1.0f);
+        canAttack = true;
+    }
+    private void AttackInPage2()
+    {
+        int rand = Random.Range(0, 5);
+        if (rand == 0) JinhillaAttack3(); //파란 바인드
+        else if (rand == 1) JinhillaAttack5(); //고근
+        else if (rand == 2) JinhillaAttack1(); //초록가시 
+        else if (rand == 3) JinhillaAttack7(); //보라가시
+        else if (rand == 4 && monsterCnt < 3) MakeMonster();
+        skillCnt++;
+    }
+    IEnumerator BossMove()
     {
         anim.SetBool("move", true);
         if (lookAtLeft)
@@ -138,40 +153,25 @@ public class BossJinhillaControl : MonoBehaviour
         {
             transform.localEulerAngles = new Vector3(0, 180, 0);
             transform.position += Vector3.right * Time.deltaTime * bossMoveSpeed;
-        }       
-    }
+        }
 
-    private void ChkBossPage()
-    {
-        if (page == 1) AttackInPage1();
-        else if (page == 2) AttackInPage2();
-    }
-    private void AttackInPage1()
-    {
-        int rand = Random.Range(0, 4);
-        if (rand == 0) JinhillaAttack3();
-        else if (rand == 1) JinhillaAttack4();
-        else if (rand == 2) JinhillaAttack9();
-        else if (rand == 3 && monsterCnt < 3) MakeMonster();
-    }
-
-    private void AttackInPage2()
-    {
-        int rand = Random.Range(0, 5);
-        if (rand == 0) JinhillaAttack3(); //파란 바인드
-        else if (rand == 1) JinhillaAttack5(); //고근
-        else if (rand == 2) JinhillaAttack1(); //초록가시 
-        else if (rand == 3) JinhillaAttack7(); //보라가시
-        else if (rand == 4 && monsterCnt < 3) MakeMonster();
+        float rand = Random.Range(1.0f, 3.0f);
+        yield return new WaitForSeconds(rand);
+        isMove = false;
+        isStand = true;
+        GetTeleport();
     }
 
     IEnumerator BossIsNotMove()
     {
-        yield return new WaitForSeconds(3.0f);
+        JinhillaStand();
+        float rand = Random.Range(0f, 3.0f);
+        yield return new WaitForSeconds(rand);
         isMove = true;
+        isStand = false;
+        GetTeleport();
     }
 
-    //////////////////////////// 11.29 //////////////////////////
     IEnumerator WaitForAfter(int i, float time1, float time2)
     {
         yield return new WaitForSeconds(time1);
@@ -186,6 +186,7 @@ public class BossJinhillaControl : MonoBehaviour
     }
     private void JinhillaStand()
     {
+        anim.SetBool("move", false);
         for(int i=1; i<transform.childCount; i++)
         {
             col[i].SetActive(false);
@@ -279,6 +280,11 @@ public class BossJinhillaControl : MonoBehaviour
         anim.SetTrigger("skill3");
     }
 
+    private void GetTeleport()
+    {
+        int rand = Random.Range(0, 2);
+        if (rand == 0) StartCoroutine(JinhillaTeleport());
+    }
     IEnumerator JinhillaTeleport()
     {
         anim.SetTrigger("skill3");
@@ -305,14 +311,17 @@ public class BossJinhillaControl : MonoBehaviour
                 case 0: //왼쪽, 오른쪽 바라봐야 함
                     bossPos.x = playerPos.x - 2.24f;
                     transform.localEulerAngles = new Vector3(0, 180, 0);
+                    lookAtLeft = false;
                     break;
                 case 1: //오른쪽
                     bossPos.x = playerPos.x + 3.24f;
                     transform.localEulerAngles = new Vector3(0, 0, 0);
+                    lookAtLeft = true;
                     break;
                 case 2: //겹치게
                     bossPos.x = playerPos.x;
                     transform.localEulerAngles = new Vector3(0, 0, 0);
+                    lookAtLeft = true;
                     break;
             }
         }else if(playerPos.x <= -8.5f)
@@ -323,10 +332,12 @@ public class BossJinhillaControl : MonoBehaviour
                 case 0: //오른쪽
                     bossPos.x = playerPos.x + 3.24f;
                     transform.localEulerAngles = new Vector3(0, 0, 0);
+                    lookAtLeft = true;
                     break;
                 case 1: //겹치게
                     bossPos.x = playerPos.x;
                     transform.localEulerAngles = new Vector3(0, 0, 0);
+                    lookAtLeft = true;
                     break;
             }
         }
@@ -334,6 +345,7 @@ public class BossJinhillaControl : MonoBehaviour
         {
             bossPos.x = playerPos.x;
             transform.localEulerAngles = new Vector3(0, 0, 0);
+            lookAtLeft = true;
         }
         transform.position = bossPos;
     }
