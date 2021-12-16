@@ -14,13 +14,11 @@ public class BossJinhillaControl : MonoBehaviour
     private float attackDelay = 3.0f;
     private float bossMoveSpeed = 0.5f;
     private bool lookAtLeft = true;
-    [SerializeField] private bool isMove = false;
-    [SerializeField] private bool isStand = true;
-    [SerializeField] private bool isAttack = false;
+    private bool isTel = false;
     public enum CurrentState { stand, move, attack, tel, dead };
     public CurrentState curState = CurrentState.stand;
 
-    private int skillCnt = 0; // 스킬은 5번까지만 쓸 수 있도록 함
+    [SerializeField] private int skillCnt = 0; // 스킬은 5번까지만 쓸 수 있도록 함
 
 
     private int monsterCnt = 0;
@@ -70,59 +68,13 @@ public class BossJinhillaControl : MonoBehaviour
                 case CurrentState.attack:
                     //ChkBossPage();
                     break;
+                case CurrentState.tel:
+                    break;
             }
             yield return null;
         }
     }
-    private void DebugChkSkill()
-    {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            JinhillaAttack1();
-        }
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            JinhillaAttack7();
-        }
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-            JinhillaAttack3();
-        }
-        if (Input.GetKeyDown(KeyCode.F2))
-        {
-            JinhillaAttack4();
-        }
-        if (Input.GetKeyDown(KeyCode.F3))
-        {
-            JinhillaAttack5();
-        }
-        if (Input.GetKeyDown(KeyCode.F4))
-        {
-            JinhillaAttack9();
-        }
-
-        if (Input.GetKeyDown(KeyCode.F5))
-        {
-            JinhillaStand();
-        }
-
-        if (Input.GetKeyDown(KeyCode.F6))
-        {
-            JinhillaSkill1();
-        }
-        if (Input.GetKeyDown(KeyCode.F7))
-        {
-            JinhillaSkill3();
-        }
-        if (Input.GetKeyDown(KeyCode.F8))
-        {
-            JinhillaSkill5();
-        }
-        if (Input.GetKeyDown(KeyCode.F9))
-        {
-            StartCoroutine(JinhillaTeleport());
-        }
-    }
+ 
     private void ChkBossPage()
     {
         if (page == 1) AttackInPage1();
@@ -178,12 +130,10 @@ public class BossJinhillaControl : MonoBehaviour
 
     IEnumerator WaitForAfter(int i, float time1, float time2)
     {
-        isAttack = true;
         yield return new WaitForSeconds(time1);
         OnCollider(i);
         yield return new WaitForSeconds(time2);
         OffCollider(i);
-        isAttack = false;
     }
 
     IEnumerator WaitForAfter(float time) // 델리게이트로 온오프 쓰도록..?
@@ -290,10 +240,11 @@ public class BossJinhillaControl : MonoBehaviour
     {
         Debug.Log("tel 함수 호출");
         int rand = Random.Range(0, 2);
-        if (rand == 0) StartCoroutine(JinhillaTeleport());
+        if (rand == 0 && curState != CurrentState.tel && !isTel) StartCoroutine(JinhillaTeleport());
     }
     IEnumerator JinhillaTeleport()
     {
+        isTel = true;
         curState = CurrentState.tel;
 
         anim.SetTrigger("skill3");
@@ -357,6 +308,9 @@ public class BossJinhillaControl : MonoBehaviour
             lookAtLeft = true;
         }
         transform.position = bossPos;
+
+        yield return new WaitForSeconds(5.0f);
+        isTel = false;
     }
 
     private void JinhillaSkill5() // 스우, 데미안 사령 소환
@@ -368,5 +322,55 @@ public class BossJinhillaControl : MonoBehaviour
     {
         anim.SetTrigger("die");
         Destroy(gameObject, 5.0f);
+    }
+
+    private void DebugChkSkill()
+    {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            JinhillaAttack1();
+        }
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            JinhillaAttack7();
+        }
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            JinhillaAttack3();
+        }
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            JinhillaAttack4();
+        }
+        if (Input.GetKeyDown(KeyCode.F3))
+        {
+            JinhillaAttack5();
+        }
+        if (Input.GetKeyDown(KeyCode.F4))
+        {
+            JinhillaAttack9();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            JinhillaStand();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F6))
+        {
+            JinhillaSkill1();
+        }
+        if (Input.GetKeyDown(KeyCode.F7))
+        {
+            JinhillaSkill3();
+        }
+        if (Input.GetKeyDown(KeyCode.F8))
+        {
+            JinhillaSkill5();
+        }
+        if (Input.GetKeyDown(KeyCode.F9))
+        {
+            StartCoroutine(JinhillaTeleport());
+        }
     }
 }

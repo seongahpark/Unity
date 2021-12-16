@@ -22,7 +22,7 @@ public class BossDetectPlayer : MonoBehaviour
         if(collision.gameObject.tag == "Player")
         {
             bc.canAttack = true;
-            bc.curState = BossJinhillaControl.CurrentState.attack;
+            //bc.curState = BossJinhillaControl.CurrentState.attack;
             Debug.Log("canAttack");
         }
     }
@@ -31,7 +31,7 @@ public class BossDetectPlayer : MonoBehaviour
     {
         if(collision.gameObject.tag == "Player")
         {
-            bc.curState = BossJinhillaControl.CurrentState.stand;
+            //bc.curState = BossJinhillaControl.CurrentState.stand;
             Debug.Log("can't Attack");
         }
     }
@@ -40,7 +40,7 @@ public class BossDetectPlayer : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
-            bc.curState = BossJinhillaControl.CurrentState.attack;
+            //bc.curState = BossJinhillaControl.CurrentState.attack;
             Debug.Log("canAttack");
         }
     }
