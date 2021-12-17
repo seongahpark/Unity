@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     public float setTime = 1800;
     public int min = 30;
     public float sec = 60;
+
+    [SerializeField] GameObject failObj;
+    [SerializeField] Transform failObjPos;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,8 +23,20 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         SetTimer();
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            GameOver();
+        }
     }
 
+    private void GameOver()
+    {
+        Vector3 pos = failObjPos.position;
+        pos.y += 1.5f;
+        pos.z = 10f;
+        Instantiate(failObj, pos, transform.rotation);
+    }
     private void SetTimer()
     {
         setTime -= Time.deltaTime;

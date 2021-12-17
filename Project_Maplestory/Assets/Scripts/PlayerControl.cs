@@ -9,10 +9,6 @@ public class PlayerControl : MonoBehaviour
     private float jumpForce = 300f;
     private float checkRadius = 0.35f;
 
-    private bool isTouchRight = false;
-    private bool isTouchLeft = false;
-    private bool isGround = false;
-
     [SerializeField] private bool isStun = false;
     public bool playerHit = false;
     private Rigidbody2D rb;

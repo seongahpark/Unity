@@ -1229,11 +1229,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb5bdcde45e02bb4fb8d35912571c6e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cam: {fileID: 633353477}
   playerCnt: 1
   time: {fileID: 144797437}
   setTime: 1800
   min: 30
   sec: 60
+  failObj: {fileID: 8993427857770121889, guid: 924537cd457908a4fa5e79e1f03bb4f4, type: 3}
+  failObjPos: {fileID: 1865782702}
 --- !u!4 &512466652
 Transform:
   m_ObjectHideFlags: 0
@@ -1469,6 +1472,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 37138541}
+  - {fileID: 1865782702}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1699,6 +1703,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 702284791}
+  - component: {fileID: 702284792}
   m_Layer: 5
   m_Name: HP_Bar
   m_TagString: Untagged
@@ -1731,6 +1736,24 @@ RectTransform:
   m_AnchoredPosition: {x: 116.9, y: -384}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &702284792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 702284790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f3a51e79c48ff34e981f42f1241535c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HPbar:
+  - {fileID: 944090482}
+  - {fileID: 1221528292}
+  - {fileID: 1597659721}
+  - {fileID: 685816495}
+  bc: {fileID: 2028616563}
 --- !u!4 &714924788 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2562455326243713368, guid: 20b1421e90100ee4eb3d08b9c443cfd1, type: 3}
@@ -4952,6 +4975,36 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6500352626924407674, guid: 2f67202b9d7c67b439ec4a91641734ff, type: 3}
   m_PrefabInstance: {fileID: 1839362842}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1865782701
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1865782702}
+  m_Layer: 0
+  m_Name: FailPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1865782702
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1865782701}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 633353478}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1975433239
 GameObject:
   m_ObjectHideFlags: 0
@@ -5192,6 +5245,7 @@ GameObject:
   - component: {fileID: 2028616561}
   - component: {fileID: 2028616562}
   - component: {fileID: 2028616563}
+  - component: {fileID: 2028616564}
   m_Layer: 0
   m_Name: JinHilla
   m_TagString: Boss
@@ -5338,16 +5392,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canAttack: 0
-  isMove: 0
-  isStand: 1
   isAttack: 0
+  page: 1
+  bossHp: 2000
+  isTel: 0
   curState: 0
+  skillCnt: 0
   player: {fileID: 1067520904}
   greenBone: {fileID: 5607175992060306076, guid: 12cff1c6560e9db43a5cf24be0e69b3e, type: 3}
   purpleBone: {fileID: 4601490211074015660, guid: d2c31acd7a8d14f4996b0568d11f74bd, type: 3}
   ball: {fileID: 1307067509905157278, guid: f354d89d8f32f2d4381bf7f2222990b5, type: 3}
   monster: {fileID: 7626136085111242939, guid: f8bf1d9b99f58a942be377d1a06f517c, type: 3}
   smoke: {fileID: 7744627759811301158, guid: ddf08704a72a1bc4fbd8333140f8bf63, type: 3}
+--- !u!114 &2028616564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2028616557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc20e19b86a779841bffa4e0bbe1c2a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2045287839
 GameObject:
   m_ObjectHideFlags: 0

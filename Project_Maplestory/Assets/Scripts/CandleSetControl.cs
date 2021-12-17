@@ -76,7 +76,7 @@ public class CandleSetControl : MonoBehaviour
 
     private void MakeAltar()
     {
-        Debug.Log(flameCnt + ", " + candleCnt + ", " + altarOn);
+        //Debug.Log(flameCnt + ", " + candleCnt + ", " + altarOn);
         if(flameCnt >= candleCnt && !altarOn)
         {
             altarOn = true;

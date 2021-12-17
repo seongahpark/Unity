@@ -33,8 +33,8 @@ public class DeathCountContrl : MonoBehaviour
 
     public void ChkDeathCount()
     {
-        Debug.Log("redCnt : " + redCnt + " / " + deathChk[0] + deathChk[1]
-            + deathChk[2] + deathChk[3] + deathChk[4]);
+        //Debug.Log("redCnt : " + redCnt + " / " + deathChk[0] + deathChk[1]
+        //    + deathChk[2] + deathChk[3] + deathChk[4]);
         for(int i=0; i< deathCnt; i++)
         {
             if (redCnt > i) deathChk[i] = true;

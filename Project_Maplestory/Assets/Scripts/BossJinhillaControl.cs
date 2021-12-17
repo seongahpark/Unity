@@ -8,13 +8,13 @@ public class BossJinhillaControl : MonoBehaviour
     private SpriteRenderer render;
 
     public bool canAttack = false;
+    public bool isAttack = false;
     
-    private int page = 1; // 1~4페이즈
-    private int bossHp = 1000;
-    private float attackDelay = 3.0f;
+    public int page = 1; // 1~4페이즈
+    public int bossHp = 2000;
     private float bossMoveSpeed = 0.5f;
     private bool lookAtLeft = true;
-    private bool isTel = false;
+    [SerializeField] private bool isTel = false;
     public enum CurrentState { stand, move, attack, tel, dead };
     public CurrentState curState = CurrentState.stand;
 
@@ -50,6 +50,7 @@ public class BossJinhillaControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        PageChk();
         DebugChkSkill();
     }
 
@@ -57,47 +58,75 @@ public class BossJinhillaControl : MonoBehaviour
     {
         while(true)
         {
-            switch (curState)
+            if (!isAttack)
             {
-                case CurrentState.stand:
-                    StartCoroutine(BossIsNotMove());
-                    break;
-                case CurrentState.move:
-                    StartCoroutine(BossMove());
-                    break;
-                case CurrentState.attack:
-                    //ChkBossPage();
-                    break;
-                case CurrentState.tel:
-                    break;
+                switch (curState)
+                {
+                    case CurrentState.stand:
+                        StartCoroutine(BossIsNotMove());
+                        yield return StartCoroutine(BossIsNotMove());
+                        break;
+                    case CurrentState.move:
+                        StartCoroutine(BossMove());
+                        yield return StartCoroutine(BossMove());
+                        break;
+                    case CurrentState.attack:
+                        StartCoroutine(ChkBossPage());
+                        yield return StartCoroutine(ChkBossPage());
+                        break;
+                    case CurrentState.tel:
+                        StartCoroutine(JinhillaTeleport());
+                        yield return StartCoroutine(JinhillaTeleport());
+                        break;
+                }
             }
             yield return null;
         }
     }
  
-    private void ChkBossPage()
+    IEnumerator ChkBossPage()
     {
+        isAttack = true;
+        anim.SetBool("move", false);
+        yield return new WaitForSeconds(0.5f);
         if (page == 1) AttackInPage1();
         else if (page == 2) AttackInPage2();
+        else if (page == 3) AttackInPage2();
+        else if (page == 4) AttackInPage2();
+        yield return null;
+    }
+
+    private void ChkSkillCnt()
+    {
+        if (skillCnt > 10)
+        {
+            skillCnt = 0;
+            curState = CurrentState.move;
+            canAttack = false;
+            isAttack = false;
+        }
+        skillCnt++;
     }
     private void AttackInPage1()
     {
-        int rand = Random.Range(0, 4);
+        ChkSkillCnt();
+
+        int rand = Random.Range(0, 4);    
         if (rand == 0) JinhillaAttack3();
         else if (rand == 1) JinhillaAttack4();
         else if (rand == 2) JinhillaAttack9();
-        else if (rand == 3 && monsterCnt < 3) MakeMonster();
-        skillCnt++;
+        else if (rand == 3 && monsterCnt < 3) JinhillaSkill1();
     }
     private void AttackInPage2()
     {
+        ChkSkillCnt();
+
         int rand = Random.Range(0, 5);
         if (rand == 0) JinhillaAttack3(); //파란 바인드
         else if (rand == 1) JinhillaAttack5(); //고근
         else if (rand == 2) JinhillaAttack1(); //초록가시 
         else if (rand == 3) JinhillaAttack7(); //보라가시
-        else if (rand == 4 && monsterCnt < 3) MakeMonster();
-        skillCnt++;
+        else if (rand == 4 && monsterCnt < 3) JinhillaSkill1(); //욕망의 현신 소환
     }
     IEnumerator BossMove()
     {
@@ -113,19 +142,21 @@ public class BossJinhillaControl : MonoBehaviour
             transform.position += Vector3.right * Time.deltaTime * bossMoveSpeed;
         }
 
-        float rand = Random.Range(2.0f, 4.0f);
+        float rand = Random.Range(3.0f, 5.0f);
         yield return new WaitForSeconds(rand);
-        GetTeleport();
-        curState = CurrentState.stand;
+        if(!isTel && !isAttack) curState = CurrentState.tel;
+        //yield return StartCoroutine(JinhillaTeleport());
+        //curState = CurrentState.stand;
     }
 
     IEnumerator BossIsNotMove()
     {
         JinhillaStand();
-        float rand = Random.Range(1.0f, 4.0f);
+        float rand = Random.Range(2.5f, 4.5f);
         yield return new WaitForSeconds(rand);
-        GetTeleport();
-        curState = CurrentState.move;
+        if (!isTel && !isAttack) curState = CurrentState.tel;
+        //yield return StartCoroutine(JinhillaTeleport());
+        //curState = CurrentState.move;
     }
 
     IEnumerator WaitForAfter(int i, float time1, float time2)
@@ -134,11 +165,13 @@ public class BossJinhillaControl : MonoBehaviour
         OnCollider(i);
         yield return new WaitForSeconds(time2);
         OffCollider(i);
+        isAttack = false;
     }
 
     IEnumerator WaitForAfter(float time) // 델리게이트로 온오프 쓰도록..?
     {
         yield return new WaitForSeconds(time);
+        isAttack = false;
     }
     private void JinhillaStand()
     {
@@ -159,12 +192,16 @@ public class BossJinhillaControl : MonoBehaviour
     private void JinhillaAttack1() //초록가시
     {
         anim.SetTrigger("attack1");
-        Instantiate(greenBone, transform.position, transform.rotation);
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jinhilla_attack1"))
+            Instantiate(greenBone, transform.position, transform.rotation);
+        StartCoroutine(WaitForAfter(3.5f));
     }
     private void JinhillaAttack7() //보라가시
     {
         anim.SetTrigger("attack7");
-        Instantiate(purpleBone, transform.position, transform.rotation);
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jinhilla_attack7"))
+            Instantiate(purpleBone, transform.position, transform.rotation);
+        StartCoroutine(WaitForAfter(3.5f));
     }
 
     private void JinhillaAttack3() //파란 바인드
@@ -182,7 +219,8 @@ public class BossJinhillaControl : MonoBehaviour
     private void JinhillaAttack5() //고근
     {
         anim.SetTrigger("attack5");
-        StartCoroutine(WaitForAfter(3, 1.6f, 1.0f));
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jinhilla_attack5"))
+            StartCoroutine(WaitForAfter(3, 1.6f, 1.0f));
         Invoke("MakeBall", 2.0f);   
     }
 
@@ -190,8 +228,9 @@ public class BossJinhillaControl : MonoBehaviour
     {
         Vector3 pos = this.transform.position;
         pos.y -= 0.3f;
-        Instantiate(ball, pos, transform.rotation);
+
         Instantiate(ball, pos, Quaternion.Euler(new Vector3(0, 180, 0)));
+        Instantiate(ball, pos, Quaternion.Euler(new Vector3(0, 0, 0)));
     }
     private void JinhillaAttack9() //찍기
     {
@@ -247,6 +286,9 @@ public class BossJinhillaControl : MonoBehaviour
         isTel = true;
         curState = CurrentState.tel;
 
+        ResetAllTrigger(anim);
+
+        Debug.Log("tel 함수 호출");
         anim.SetTrigger("skill3");
         unHittable = true; // 텔포동안은 무적
         yield return new WaitForSeconds(1.0f);
@@ -309,10 +351,22 @@ public class BossJinhillaControl : MonoBehaviour
         }
         transform.position = bossPos;
 
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(1.0f);
         isTel = false;
+
+        int rand = Random.Range(0, 3);
+        if(rand == 0 ) curState = CurrentState.stand;
+        else curState = CurrentState.move;
     }
 
+    private static void ResetAllTrigger(Animator anim)
+    {
+        foreach(var trigger in anim.parameters)
+        {
+            if (trigger.type == AnimatorControllerParameterType.Trigger)
+                anim.ResetTrigger(trigger.name);
+        }
+    }
     private void JinhillaSkill5() // 스우, 데미안 사령 소환
     {
         anim.SetTrigger("skill5");
@@ -324,6 +378,18 @@ public class BossJinhillaControl : MonoBehaviour
         Destroy(gameObject, 5.0f);
     }
 
+    private void PageChk()
+    {
+        if (bossHp < 0)
+        {
+            ResetAllTrigger(anim);
+            JinhillaDie();
+        }
+        if (bossHp < 500) page = 4;
+        else if (bossHp < 1000) page = 3;
+        else if (bossHp < 1500) page = 2;
+        else page = 1;
+    }
     private void DebugChkSkill()
     {
         if (Input.GetKeyDown(KeyCode.K))
@@ -371,6 +437,11 @@ public class BossJinhillaControl : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F9))
         {
             StartCoroutine(JinhillaTeleport());
+        }
+
+        if (Input.GetKey(KeyCode.X))
+        {
+            bossHp -= 1;
         }
     }
 }
