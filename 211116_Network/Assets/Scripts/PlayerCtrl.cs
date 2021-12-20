@@ -7,6 +7,7 @@ using Photon.Pun;
 
 public class PlayerCtrl : MonoBehaviourPun, IPunInstantiateMagicCallback
 {
+    private PlayerGameManager gm = null;
     private Rigidbody rb = null;
 
     [SerializeField] private GameObject bulletPrefab = null;
@@ -24,6 +25,7 @@ public class PlayerCtrl : MonoBehaviourPun, IPunInstantiateMagicCallback
 
     private void Awake()
     {
+        gm = GameObject.Find("GameManager").GetComponent<PlayerGameManager>();
         rb = this.GetComponent<Rigidbody>();
         t_mesh = t_nick.GetComponent<TextMesh>();
         cam = Camera.main;
@@ -106,6 +108,9 @@ public class PlayerCtrl : MonoBehaviourPun, IPunInstantiateMagicCallback
         {
             Debug.LogErrorFormat("Destroy: {0}", PhotonNetwork.NickName);
             isDead = true;
+            gm.isDead(t_mesh.text);
+            gm.DiePlayerCnt++;
+            gm.ChkGameOver();
             PhotonNetwork.Destroy(this.gameObject);
         }
     }
@@ -114,7 +119,8 @@ public class PlayerCtrl : MonoBehaviourPun, IPunInstantiateMagicCallback
     public void OnDamage(int _dmg)
     {
         hp -= _dmg;
-        photonView.RPC("ApplyHp", RpcTarget.Others, hp);
+        photonView.RPC("ApplyHp", RpcTarget.All, hp);
+        //photonView.RPC("ApplyHp", RpcTarget.Others, hp);
     }
 
     // PhotonNetwork.Instantiate로 객체가 생성되면 호출되는 콜백함수

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 using Photon.Pun;
 using Photon.Realtime;
@@ -11,6 +12,14 @@ public class PlayerGameManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private GameObject playerPrefab = null;
     [SerializeField] private Color[] colors = null;
+
+    public bool gameStart = false;
+    public bool gameOver = false;
+    [SerializeField] private Text t_gamestart;
+    [SerializeField] private Text t_playerdie;
+    public int CurPlayerCnt = 1;
+    public int DiePlayerCnt = 0;
+    
 
     // 각 클라이언트 마다 생성된 플레이어 게임 오브젝트를 리스트로 관리
     private List<GameObject> playerGoList = new List<GameObject>();
@@ -31,6 +40,8 @@ public class PlayerGameManager : MonoBehaviourPunCallbacks
             go.GetComponent<PlayerCtrl>().SetMaterial(PhotonNetwork.CurrentRoom.PlayerCount);
         }
 
+        t_gamestart.gameObject.SetActive(false);
+        t_playerdie.gameObject.SetActive(false);
     }
 
     // PhotonNetwork.LeaveRooom 함수가 호출되면 호출
@@ -60,6 +71,9 @@ public class PlayerGameManager : MonoBehaviourPunCallbacks
         int playerCnt = PhotonNetwork.CurrentRoom.PlayerCount;
         // 플레이어 리스트가 최신이라면 건너뜀
         if (playerCnt == playerGoList.Count) return;
+
+        ChkGameStart(playerCnt); //2명 이상일 경우 게임 시작
+        CurPlayerCnt = playerCnt;
 
         // 현재 방에 접속해 있는 플레이어의 수
         Debug.LogError("CurrentRoom PlayerCount : " + playerCnt);
@@ -134,5 +148,54 @@ public class PlayerGameManager : MonoBehaviourPunCallbacks
         Debug.Log("Leave Room");
 
         PhotonNetwork.LeaveRoom();
+    }
+
+    public void ChkGameStart(int playerCnt)
+    {
+        if(playerCnt > 2)
+        {
+            t_gamestart.text = "New Player Found";
+            t_gamestart.gameObject.SetActive(true);
+            Invoke("TextGameStart", 2.0f);
+        }
+        else if(playerCnt > 1)
+        {
+            gameStart = true;
+            t_gamestart.text = "Game Start";
+            t_gamestart.gameObject.SetActive(true);
+            Invoke("TextGameStart", 2.0f);
+        }
+    }
+
+    private void TextGameStart()
+    {
+        t_gamestart.gameObject.SetActive(false);
+        t_playerdie.gameObject.SetActive(false);
+    }
+
+    public void isDead(string player)
+    {
+        t_playerdie.text = player + " has been Killed";
+        t_playerdie.gameObject.SetActive(true);
+        Invoke("TextGameStart", 2.0f);
+    }
+
+    public void ChkGameOver()
+    {
+        Debug.LogError("cur & die " + CurPlayerCnt + ", " + DiePlayerCnt);
+        int chkcnt = CurPlayerCnt - DiePlayerCnt;
+        if (gameStart && (chkcnt <=1))
+        {    
+            gameOver = true;
+            t_gamestart.text = "GAME OVER";
+            t_gamestart.gameObject.SetActive(true);
+            Invoke("SetTimeScale", 1.5f);
+        }
+    }
+
+    public void SetTimeScale()
+    {
+        Time.timeScale = 0;
+        t_playerdie.gameObject.SetActive(false);
     }
 }
