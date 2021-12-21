@@ -5,31 +5,80 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] BossJinhillaControl bc;
+
     public int playerCnt = 1; // default
     [SerializeField] Text time;
-    public float setTime = 1800;
+    public static float setTime = 1784; // 29분 44분부터 시작하는 점 반영
     public int min = 30;
     public float sec = 60;
 
+    //낫 베기 시간 주기
+    public int page_cutting = 0;
+    public static int[] cutTime = { 150, 125, 100 };
+    private float nextCutTime;
+    public bool isCutting = false;
+
     [SerializeField] GameObject failObj;
     [SerializeField] Transform failObjPos;
+    [SerializeField] GameObject cutMotion;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        //최초 낫 베기 시각 -> 27 : 14
+        nextCutTime = setTime - cutTime[0];
     }
 
     // Update is called once per frame
     void Update()
     {
+        Debug.LogError("set, next : " + setTime + ", " + nextCutTime);
         SetTimer();
-
+        ChkCutTime();
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            GameOver();
+            setTime = 1645;
+            //GameOver();
         }
     }
 
+    private void ChkCutTime()
+    {
+        if(setTime <= nextCutTime)
+        {
+            Vector3 pos = Camera.main.transform.position;
+            pos.z = 10;
+            //낫 베기 시전시 진힐라 및 플레이어 모두 무적
+            //낫 베기 모션 플레이어 화면에 가득차게 출력
+            Instantiate(cutMotion, pos, Quaternion.identity);
+            bc.ChkCutPage();
+            GetNextCutTime();
+            isCutting = true;
+            Invoke("SetIsCuttingFalse", 3.6f);
+        }
+    }
+
+    private void SetIsCuttingFalse()
+    {
+        isCutting = false;
+    }
+    public void GetNextCutTime()
+    {
+        switch (page_cutting)
+        {
+            case 0:
+                nextCutTime -= cutTime[0];
+                break;
+            case 1:
+                nextCutTime -= cutTime[1];
+                break;                                                                                      
+            case 2:
+                nextCutTime -= cutTime[2];
+                break;
+        }
+        Debug.Log("next cut : " + nextCutTime);
+    }
     private void GameOver()
     {
         Vector3 pos = failObjPos.position;
@@ -37,6 +86,7 @@ public class GameManager : MonoBehaviour
         pos.z = 10f;
         Instantiate(failObj, pos, transform.rotation);
     }
+
     private void SetTimer()
     {
         setTime -= Time.deltaTime;

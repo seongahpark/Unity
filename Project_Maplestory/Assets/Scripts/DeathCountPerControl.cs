@@ -32,10 +32,12 @@ public class DeathCountPerControl : MonoBehaviour
     public void WhiteBreak()
     {
         anim.SetTrigger("whiteBreak");
+        Destroy(gameObject, 1.0f);
     }
 
     public void RedBreak()
     {
         anim.SetTrigger("redBreak");
+        Destroy(gameObject, 1.0f);
     }
 }

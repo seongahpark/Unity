@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DeathCountContrl : MonoBehaviour
 {
+    [SerializeField] GameManager gm;
     List<GameObject> deathCount = new List<GameObject>();
     [SerializeField] DeathCountPerControl[] dpc = new DeathCountPerControl[5];
 
@@ -20,6 +21,7 @@ public class DeathCountContrl : MonoBehaviour
     void Update()
     {
         ChkDeathCount();
+        if (gm.isCutting) RedBreak();
     }
 
     private void GetDeathCount()
@@ -46,7 +48,7 @@ public class DeathCountContrl : MonoBehaviour
         ChkDeathCount();
         for (int i=0; i< deathCnt; i++)
         {
-            if(deathChk[i] == true)
+            if(deathChk[i])
             {
                 dpc[i].WhiteToRed();
             }
@@ -57,7 +59,15 @@ public class DeathCountContrl : MonoBehaviour
     {
         for (int i = 0; i < deathCnt; i++)
         {
-            if (deathChk[i] == false) dpc[i].RedToWhite();
+            if (!deathChk[i]) dpc[i].RedToWhite();
+        }
+    }
+
+    private void RedBreak()
+    {
+        for(int i=0; i<deathCnt; i++)
+        {
+            if (deathChk[i]) dpc[i].RedBreak();
         }
     }
 }

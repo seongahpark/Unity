@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BossJinhillaControl : MonoBehaviour
 {
+    [SerializeField] private GameManager gm;
+
     private Animator anim;
     private SpriteRenderer render;
 
@@ -11,7 +13,9 @@ public class BossJinhillaControl : MonoBehaviour
     public bool isAttack = false;
     
     public int page = 1; // 1~4페이즈
-    public int bossHp = 2000;
+
+    public static int MaxBossHp = 2000;
+    public int bossHp = MaxBossHp;
     private float bossMoveSpeed = 0.5f;
     private bool lookAtLeft = true;
     [SerializeField] private bool isTel = false;
@@ -127,6 +131,18 @@ public class BossJinhillaControl : MonoBehaviour
         else if (rand == 2) JinhillaAttack1(); //초록가시 
         else if (rand == 3) JinhillaAttack7(); //보라가시
         else if (rand == 4 && monsterCnt < 3) JinhillaSkill1(); //욕망의 현신 소환
+    }
+
+    public void ChkCutPage()
+    {
+        // 낫 베기시 2page 40% 이하의 체력, 3page 20% 이하의 체력일 경우
+        // 낫 베기 주기가 변경 됨
+        // 2page 40% 체력 : MaxBossHp/4 * 2.4
+        // 3page 20% 체력 : MaxBossHp/4 * 1.2
+        float nextToCutPage2 = MaxBossHp / 4f * 2.4f;
+        float nextToCutPage3 = MaxBossHp / 4f * 1.2f;
+        if (gm.page_cutting == 0 && bossHp <= nextToCutPage2) gm.page_cutting = 1;
+        if (gm.page_cutting == 1 && bossHp <= nextToCutPage3) gm.page_cutting = 2;
     }
     IEnumerator BossMove()
     {
@@ -366,6 +382,7 @@ public class BossJinhillaControl : MonoBehaviour
             if (trigger.type == AnimatorControllerParameterType.Trigger)
                 anim.ResetTrigger(trigger.name);
         }
+        anim.SetBool("move", false);
     }
     private void JinhillaSkill5() // 스우, 데미안 사령 소환
     {
