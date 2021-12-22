@@ -5,12 +5,14 @@ using UnityEngine;
 public class DeathCountContrl : MonoBehaviour
 {
     [SerializeField] GameManager gm;
+    [SerializeField] CandleSetControl csc;
     List<GameObject> deathCount = new List<GameObject>();
     [SerializeField] DeathCountPerControl[] dpc = new DeathCountPerControl[5];
 
     bool[] deathChk = new bool[5];
     public int redCnt = 0;
     public int deathCnt = 5; //초기
+    private int redBreakCnt = 0; // 낫이 베여 사라진 데스카운트
     // Start is called before the first frame update
     void Start()
     {
@@ -21,10 +23,9 @@ public class DeathCountContrl : MonoBehaviour
     void Update()
     {
         ChkDeathCount();
-        if (gm.isCutting) RedBreak();
     }
 
-    private void GetDeathCount()
+    public void GetDeathCount()
     {
         for (int i = 0; i < this.transform.childCount; i++)
         {
@@ -63,11 +64,13 @@ public class DeathCountContrl : MonoBehaviour
         }
     }
 
-    private void RedBreak()
+    public void RedBreak()
     {
         for(int i=0; i<deathCnt; i++)
         {
             if (deathChk[i]) dpc[i].RedBreak();
+            csc.candleCnt--;
         }
+        
     }
 }

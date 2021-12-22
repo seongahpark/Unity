@@ -282,6 +282,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gm: {fileID: 512466651}
+  csc: {fileID: 187208586}
   dpc:
   - {fileID: 941906037}
   - {fileID: 1725810466}
@@ -506,6 +507,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gm: {fileID: 512466651}
   altar: {fileID: 1384964946257684957, guid: 140cd9f100778fc4b998e502534df357, type: 3}
+  candleCnt: 3
   altarOn: 0
   flameCnt: 0
 --- !u!1 &193625736
@@ -1231,6 +1233,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bc: {fileID: 2028616563}
+  dc: {fileID: 37138542}
+  csc: {fileID: 187208586}
   playerCnt: 1
   time: {fileID: 144797437}
   min: 30

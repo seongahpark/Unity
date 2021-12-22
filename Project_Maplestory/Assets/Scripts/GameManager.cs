@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] BossJinhillaControl bc;
+    [SerializeField] DeathCountContrl dc;
+    [SerializeField] CandleSetControl csc;
 
     public int playerCnt = 1; // default
     [SerializeField] Text time;
@@ -33,12 +35,12 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.LogError("set, next : " + setTime + ", " + nextCutTime);
+        //Debug.LogError("set, next : " + setTime + ", " + nextCutTime);
         SetTimer();
         ChkCutTime();
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            setTime = 1645;
+            setTime = 1640;
             //GameOver();
         }
     }
@@ -56,6 +58,13 @@ public class GameManager : MonoBehaviour
             GetNextCutTime();
             isCutting = true;
             Invoke("SetIsCuttingFalse", 3.6f);
+
+            //데스카운트 초기화
+            dc.RedBreak();
+            dc.GetDeathCount();
+
+            //촛불 초기화
+            csc.AfterCutting();
         }
     }
 

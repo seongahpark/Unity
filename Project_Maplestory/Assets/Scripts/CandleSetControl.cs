@@ -7,7 +7,7 @@ public class CandleSetControl : MonoBehaviour
     List<GameObject> candle = new List<GameObject>();
     [SerializeField] private GameManager gm;
     [SerializeField] private GameObject altar;
-    private int candleCnt = 3; //default
+    public int candleCnt = 3; //default
     private int maxCandleCnt = 10;
     public bool altarOn = false;
 
@@ -26,9 +26,12 @@ public class CandleSetControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ShowCandle();
-        if(maxCandleCnt > flameCnt) GetFire();
-        MakeAltar();
+        if (!gm.isCutting)
+        {
+            ShowCandle();
+            if (maxCandleCnt > flameCnt) GetFire();
+            MakeAltar();
+        }
     }
 
     private void GetCandle()
@@ -77,7 +80,7 @@ public class CandleSetControl : MonoBehaviour
     private void MakeAltar()
     {
         //Debug.Log(flameCnt + ", " + candleCnt + ", " + altarOn);
-        if(flameCnt >= candleCnt && !altarOn)
+        if(flameCnt >= candleCnt && !altarOn && flameCnt >0)
         {
             altarOn = true;
             //제단 범위 (-9.98~ 10.23, -1.48, 0)
@@ -96,5 +99,10 @@ public class CandleSetControl : MonoBehaviour
             GameObject flame = candle[i].transform.GetChild(0).gameObject;
             flame.SetActive(false);
         }
+    }
+
+    public void AfterCutting()
+    {
+        ClearCandle();
     }
 }
